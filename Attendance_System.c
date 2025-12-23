@@ -63,6 +63,109 @@ int main() {
     }
     return 0;
 }
+
+void addStudent() {
+    if (student_num >= STUDENT_MAX) {
+        printf("学生数量已达上限！\n");
+        return;
+    }
+
+    char tempId[20];
+    printf("请输入学号：");
+    scanf("%s", tempId);
+    for (int i = 0; i < student_num; i++) {
+        if (strcmp(student[i].id, tempId) == 0) {
+            printf("该学号已存在，添加失败！\n");
+            return;
+        }
+    }
+
+    strcpy(student[student_num].id, tempId);
+    printf("请输入姓名：");
+    scanf("%s", student[student_num].name);
+    printf("请输入班级：");
+    scanf("%s", student[student_num].className);
+    student[student_num].score = 0; 
+    student_num++;
+    printf("学生添加成功！\n");
+}
+
+
+void deleteInfo() {
+    int choice;
+    printf("=== 删除选项 ===\n");
+    printf("1. 删除学生（同步删除其所有考勤）\n");
+    printf("2. 删除单条考勤记录\n");
+    printf("请选择：");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        char delId[20];
+        printf("请输入要删除的学生学号：");
+        scanf("%s", delId);
+
+        int index = -1;
+        for (int i = 0; i < student_num; i++) {
+            if (strcmp(student[i].id, delId) == 0) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index == -1) {
+            printf("未找到该学生！\n");
+            return;
+        }
+
+        for (int i = index; i < student_num - 1; i++) {
+            student[i] = student[i + 1];
+        }
+        student_num--;
+		int j = 0;
+        while (j < attend_num) {
+            if (strcmp(attend[j].stuId, delId) == 0) {
+                for (int k = j; k < attend_num - 1; k++) {
+                    attend[k] = attend[k + 1];
+                }
+                attend_num--;
+            } else {
+                j++;
+            }
+        }
+        printf("学生及关联考勤已删除！\n");
+
+    } else if (choice == 2) {
+        char delId[20], delDate[20];
+        printf("请输入学生学号：");
+        scanf("%s", delId);
+        printf("请输入要删除的考勤日期（格式：2025-12-22）：");
+        scanf("%s", delDate);
+
+        int index = -1;
+        for (int i = 0; i < attend_num; i++) {
+            if (strcmp(attend[i].stuId, delId) == 0 && strcmp(attend[i].date, delDate) == 0) {
+                index = i;
+                break;
+            }
+        }
+
+         if (index == -1) {
+            printf("未找到该考勤记录！\n");
+            return;
+        }
+
+	for (int i = index; i < attend_num - 1; i++) {
+            attend[i] = attend[i + 1];
+        }
+        attend_num--;
+        calculateScore(); // 删除后重新计算考核分
+        printf("考勤记录已删除！\n");
+
+    } else {
+        printf("输入错误！\n");
+    }
+}
+
 void loaddata(){
     int count_stu = 0;
     int count_att = 0;
