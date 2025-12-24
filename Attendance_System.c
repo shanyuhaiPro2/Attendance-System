@@ -4,6 +4,67 @@
  Attend attend[ATTEND_MAX];     //考勤信息结构体数组
 int attend_num=0, student_num=0;   //全局变量，分别是但前考勤记录条数和学生人数
 
+void search_student()
+{
+    printf("=== 菜单 ===\n");
+    printf("1. 按学号查询\n");
+    printf("2. 按姓名查询\n");
+    int option;
+    scanf("%d", &option);
+    switch (option)
+    {
+    case 1:
+    {
+        int id;
+        printf("请输入学号：\n");
+        scanf("%d", &id);
+        int index=0;
+        for (int i = 0; i < student_num; i++)
+        {
+            if (student[i].id == id)
+            {
+                index=1;
+                printf("学号:%d\n姓名:%s\n班级:%s\n性别:%s\n", student[i].id, student[i].name, student[i].classes,student[i].sex);
+            }
+        }
+        if(index==0){
+            printf("未找到该学生！\n");
+        }
+        break;
+    }
+    case 2:
+    {
+        char name[15];
+        printf("请输入姓名：\n");
+        scanf("%s", name);
+        int index=0;
+        for (int i = 0; i < student_num; i++)
+        {
+            if (strcmp(student[i].name, name) == 0)
+            {
+                printf("学号：%d\n姓名：%s\n班级：%s\n性别：%s\n", student[i].id, student[i].name, student[i].classes, student[i].sex);
+                index=1;
+            }
+        }
+        if(index==0){
+            printf("未找到该学生！\n");
+        }
+        break;
+    }
+    default:
+        printf("请输入正确选项！\n");
+        break;
+    }
+}
+    void list_student()
+    {
+        for (int i = 0; i < student_num; i++)
+        {
+            printf("学号：%d\n姓名：%s\n班级：%s\n性别：%s\n", student[i].id, student[i].name, student[i].classes, student[i].sex);
+        }
+        printf("共计%d名学生\n", student_num);
+    }
+
 void menu() {
     printf("=== 菜单 ===\n");
     printf("1. 添加学生\n");
