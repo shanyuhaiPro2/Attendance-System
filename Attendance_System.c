@@ -167,65 +167,68 @@ void count_attend() {
 }
 
 void revise() {
-	int id, i;
-	int found = 0;
-	
-	if (attend_num == 0) {
-		printf("暂无考勤记录，无法修改！\n");
-		return;
-	}
+    int id, i, j;
+    int found = 0;
+    int record_index = -1;
 
-	view_attend();
+    if (attend_num == 0) {
+        printf("暂无考勤记录，无法修改！\n");
+        return;
+    }
 
-	printf("请输入要修改的记录编号：");
-	scanf("%d",&id);
-		while(1){
-			if(id>attend_num){printf("该学生不存在！\n请重新输入：\n");
-			scanf("%d", &id);
-		}
-			else break;}
-			
+    view_attend();
 
-	for (i = 0; i < attend_num; i++) {
-		if (attend[i].attend_id == id) {
-			found = 1;
-			
-			printf("请输入新的学号：");
-			scanf("%s", &attend[i].id);
+    printf("请输入要修改的记录编号：");
+    scanf("%d", &id);
 
-			printf("请输入新的课程：");
-			scanf("%s", attend[i].subject);
-			
-			printf("请输入新的日期(如 2025-12-12)：");
-			scanf("%s", attend[i].date);
-			
-			printf("请输入新的考勤状态(1出勤 2缺勤 3迟到 4请假)：");
-			int a;
-			int old_mode=attend[i].mode;
-			scanf("%d", &a);
-			while(1){
-				if(a<1||a>4){printf("请输入正确数字：");
-				scanf("%d", &a);
-			}
-				else{   
-					attend[i].mode=a;
-			     		break;
-			    }
-			     	}
-			if((old_mode==1||old_mode==3)&&(a==2||a==4)){
-				student[i].count--;}
-			else if((old_mode==2||old_mode==4)&&(a==1||a==3)){
-				student[i].count++;}
-			
-			printf("修改成功！\n");
-			break;
-		}
-	}
-	
-	if (!found) {
-		printf("未找到该记录编号！\n");
-	}
-	count_attend();
+    for (i = 0; i < attend_num; i++) {
+        if (attend[i].attend_id == id) {
+            found = 1;
+            record_index = i;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("未找到记录编号 %d！\n", id);
+        return;
+    }
+
+    int old_id = attend[record_index].id;
+    int old_mode = attend[record_index].mode;
+
+    printf("请输入新的学号：");
+    int new_id;
+    scanf("%d", &new_id);
+
+    int stu_idx = -1;
+    for (j = 0; j < student_num; j++) {
+        if (student[j].id == new_id) {
+            stu_idx = j;
+            break;
+        }
+    }
+    if (stu_idx == -1) {
+        printf("学号 %d 不存在！\n", new_id);
+        return;
+    }
+    attend[record_index].id = new_id;
+
+    printf("请输入新的课程：");
+    scanf("%s", attend[record_index].subject);
+
+    printf("请输入新的日期(如 2025-12-12)：");
+    scanf("%s", attend[record_index].date);
+     
+    printf("请输入新的考勤状态(1出勤 2缺勤 3迟到 4请假)：");
+    int new_mode;
+    scanf("%d", &new_mode);
+    while (new_mode < 1 || new_mode > 4) {
+        printf("输入无效，请输入1-4之间的数字：");
+        scanf("%d", &new_mode);
+    }
+    attend[record_index].mode = new_mode;
+
+    printf("修改成功！\n");
+    count_attend();  
 }
-
-
